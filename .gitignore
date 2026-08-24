@@ -1,0 +1,9 @@
+.DS_Store
+.venv/
+__pycache__/
+.pytest_cache/
+*.egg-info/
+*.jsonl.gz
+combined_reddit_data.json
+data_for_analysis_final.jsonl
+

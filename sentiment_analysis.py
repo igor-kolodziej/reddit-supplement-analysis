@@ -7,13 +7,11 @@ import sys
 import unicodedata
 from typing import Iterable, Dict, Any, List, Tuple
 from collections import defaultdict
-from functools import lru_cache
 
 import spacy
 from spacy.matcher import PhraseMatcher
 from flashtext import KeywordProcessor
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
-from transformers import pipeline
 from tqdm import tqdm
 from params import SUPPLEMENT_LIST, SUPPLEMENT_SYNONYMS, ASPECT_TERMS, INTENT_LABELS
 import regex as re
@@ -136,8 +134,20 @@ def build_matchers(nlp, supplement_list: List[str], synonyms: Dict[str, List[str
     return pm, kp
 
 def build_intent_pipeline(model_name: str = "facebook/bart-large-mnli", device: str = "gpu"):
-    # device can be "cpu", an int GPU id, or "auto" if your environment supports it
-    return pipeline("zero-shot-classification", model=model_name, device=0 if device != "cpu" else -1)
+    from transformers import pipeline
+
+    if device == "cpu":
+        device_id = -1
+    elif device == "auto":
+        try:
+            import torch
+
+            device_id = 0 if torch.cuda.is_available() else -1
+        except ImportError:
+            device_id = -1
+    else:
+        device_id = int(device)
+    return pipeline("zero-shot-classification", model=model_name, device=device_id)
 
 def build_vader():
     return SentimentIntensityAnalyzer()
@@ -198,8 +208,8 @@ def detect_supplements(pmatcher, kw, doc):
 
     return sorted(hits, key=lambda x: (x[1], x[2]))
 
-@lru_cache(maxsize=200000)
 def classify_intent(zero_shot, text: str) -> Tuple[str, float]:
+    """Classify one sentence without retaining a model object in a global cache key."""
     res = zero_shot(text, candidate_labels=INTENT_LABELS, multi_label=False)
     return res["labels"][0], float(res["scores"][0])
 
@@ -570,7 +580,7 @@ def run(args):
         batch_size=args.write_batch_size
     )
 
-if __name__ == "__main__":
+def build_parser() -> argparse.ArgumentParser:
     ap = argparse.ArgumentParser(description="Streaming supplement sentiment with intent gating, negation, and fast matching")
     ap.add_argument("--input", default = "combined_reddit_data.json", help="Path to combined_reddit_data.json or .jsonl/.jsonl.gz")
     ap.add_argument("--output", default="data_for_analysis_final.jsonl", help="Path to output .jsonl or .jsonl.gz")
@@ -580,5 +590,12 @@ if __name__ == "__main__":
     ap.add_argument("--write-batch-size", type=int, default=4096, help="Number of records to batch before writing to file")
     ap.add_argument("--intent-model", default="facebook/bart-large-mnli", help="HF zero-shot model name")
     ap.add_argument("--device", default="auto", help="cpu or GPU id via transformers (cpu/auto)")
-    args = ap.parse_args()
-    run(args)
+    return ap
+
+
+def main() -> None:
+    run(build_parser().parse_args())
+
+
+if __name__ == "__main__":
+    main()
