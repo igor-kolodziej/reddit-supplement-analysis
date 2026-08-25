@@ -1,8 +1,8 @@
 # Reddit Supplement NLP
 
-A streaming NLP pipeline for exploring how people discuss supplements: which products are mentioned, whether a sentence describes an experience or asks a question, what sentiment it carries, and which benefit or side-effect aspects appear.
+This project looks at how people discuss supplements on Reddit. It processes posts one at a time and records which products are mentioned, whether a sentence describes an experience or asks a question, its sentiment, and any benefit or side-effect terms it contains.
 
-The project combines exact and fuzzy mention matching, zero-shot intent classification, VADER sentiment, dependency-aware negation rules, and sentence-level aspect extraction. It was developed as a text-analysis project and is presented here as an auditable research workflow rather than a source of health advice.
+It combines exact and fuzzy name matching, zero-shot intent classification, VADER sentiment, negation rules, and sentence-level aspect extraction. I built it as a text-analysis project, not as a source of health advice.
 
 > Reddit posts are anecdotal user-generated content. The output cannot establish safety, efficacy, dosage, or causality and must not be used for medical decisions.
 
