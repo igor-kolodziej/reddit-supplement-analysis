@@ -10,11 +10,11 @@ The project combines exact and fuzzy mention matching, zero-shot intent classifi
 
 ```text
 Reddit JSONL
-   │
-   ├── optional submission/comment join
-   └── normalization → sentence parsing → supplement matching
-                                      → intent + sentiment + aspects
-                                      → streaming JSONL output
+   |
+   +-- optional submission/comment join
+   +-- normalization -> sentence parsing -> supplement matching
+                                      -> intent + sentiment + aspects
+                                      -> streaming JSONL output
 ```
 
 ## Quick start
@@ -88,7 +88,7 @@ pip install -e ".[analysis]"
 
 ## Data and ethics
 
-- Obtain data lawfully and review Reddit’s current terms, API rules, and research requirements.
+- Obtain data lawfully and review Reddit's current terms, API rules, and research requirements.
 - Minimize retained fields and remove usernames where identity is not necessary.
 - Do not republish deleted content or quote sensitive health disclosures.
 - Treat sentiment and aspect labels as fallible model outputs, not clinical evidence.
@@ -103,5 +103,4 @@ pip install -e ".[analysis]"
 
 ## Author
 
-[Igor Kołodziej](https://igor-kolodziej.github.io/) · [LinkedIn](https://www.linkedin.com/in/igor-kolodziej/)
-
+[Igor Kołodziej](https://igor-kolodziej.github.io/) | [LinkedIn](https://www.linkedin.com/in/igor-kolodziej/)
